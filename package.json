@@ -1,0 +1,16 @@
+{
+  "name": "hookshot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hookshot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Noah Zoschke",
+  "license": "ISC",
+  "dependencies": {
+    "ngrok": "^3.1.0",
+    "simple-oauth2": "^2.2.1",
+    "unirest": "^0.5.1"
+  }
+}
