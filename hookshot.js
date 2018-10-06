@@ -2,7 +2,8 @@
 
 const http = require("http")
 const ngrok = require("ngrok")
-const unirest = require("unirest")
+const request = require("request");
+
 
 const oauth2 = require('simple-oauth2').create({
     client: {
@@ -88,43 +89,44 @@ async function receiveEvent() {
     })
 }
 
-async function request(method, url, body, headers, user, pass) {
-    var req = unirest(method, url)
-    req.headers(headers)
+async function req(method, url, body, headers, user, pass) {
+    var options = { method, url, body, headers, json: true };
 
     if (user !== undefined)
-        req.auth(user, pass)
+        options.auth = { user, pass }
 
     return new Promise(function (resolve, reject) {
-        req.send(body).end(function (resp) {
-            resolve(resp.body)
-        })
+        request(options, function (error, response, body) {
+            if (error) return reject(error);
+            resolve(body)
+        });
+
     })
 }
 
 var token = undefined
-async function requestBearer(method, url, body) {
+async function reqBearer(method, url, body) {
     if (token === undefined) {
         const result = await oauth2.clientCredentials.getToken()
         token = oauth2.accessToken.create(result).token
     }
 
-    return request(method, url, body, {
+    return req(method, url, body, {
         "Authorization": `Bearer ${token.access_token}`,
         "Content-Type": "application/json"
     })
 }
 
 async function listWorkspaces() {
-    return requestBearer("GET", "https://platform.segmentapis.com/v1alpha/workspaces")
+    return reqBearer("GET", "https://platform.segmentapis.com/v1alpha/workspaces")
 }
 
 async function deleteSource(w, s) {
-    return requestBearer("DELETE", `https://platform.segmentapis.com/v1alpha/${w}/${s}`)
+    return reqBearer("DELETE", `https://platform.segmentapis.com/v1alpha/${w}/${s}`)
 }
 
 async function createSource(w, s) {
-    return requestBearer("POST", `https://platform.segmentapis.com/v1alpha/${w}/sources`, {
+    return reqBearer("POST", `https://platform.segmentapis.com/v1alpha/${w}/sources`, {
         "source": {
             "name": `${w}/${s}`,
             "catalog_name": "catalog/sources/javascript"
@@ -133,7 +135,7 @@ async function createSource(w, s) {
 }
 
 async function createDest(w, s, url) {
-    return requestBearer("POST", `https://platform.segmentapis.com/v1alpha/${w}/${s}/destinations`, {
+    return reqBearer("POST", `https://platform.segmentapis.com/v1alpha/${w}/${s}/destinations`, {
         "destination": {
             "name": `${w}/${s}/destinations/webhooks`,
             "config": [
@@ -153,7 +155,7 @@ async function createDest(w, s, url) {
 }
 
 async function createEvent(s) {
-    return request("POST", "https://api.segment.io/v1/track", {
+    return req("POST", "https://api.segment.io/v1/track", {
         "event": "User Created",
         "userId": "78e56a08-ad10-42b1-88d2-b823623ac875",
         "properties": {
