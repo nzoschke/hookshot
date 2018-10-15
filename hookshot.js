@@ -4,18 +4,6 @@ const http = require("http")
 const ngrok = require("ngrok")
 const request = require("request");
 
-
-const oauth2 = require('simple-oauth2').create({
-    client: {
-        id: process.env.CLIENT_ID,
-        secret: process.env.CLIENT_SECRET
-    },
-    auth: {
-        tokenHost: 'https://id.segmentapis.com',
-        tokenPath: '/oauth2/token'
-    }
-})
-
 const Emitter = require("events")
 const emitter = new Emitter();
 
@@ -104,15 +92,9 @@ async function req(method, url, body, headers, user, pass) {
     })
 }
 
-var token = undefined
 async function reqBearer(method, url, body) {
-    if (token === undefined) {
-        const result = await oauth2.clientCredentials.getToken()
-        token = oauth2.accessToken.create(result).token
-    }
-
     return req(method, url, body, {
-        "Authorization": `Bearer ${token.access_token}`,
+        "Authorization": `Bearer ${process.env.TOKEN}`,
         "Content-Type": "application/json"
     })
 }
