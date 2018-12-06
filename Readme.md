@@ -5,8 +5,7 @@ End-to-end testing of Segment event delivery via the Platform API.
 ```shell
 $ npm install
 
-$ export CLIENT_ID=...
-$ export CLIENT_SECRET=...
+$ export TOKEN=...
 
 $ ./hookshot.js
 server:       listening on 3000

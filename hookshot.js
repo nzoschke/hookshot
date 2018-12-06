@@ -100,15 +100,15 @@ async function reqBearer(method, url, body) {
 }
 
 async function listWorkspaces() {
-    return reqBearer("GET", "https://platform.segmentapis.com/v1alpha/workspaces")
+    return reqBearer("GET", "https://platform.segmentapis.com/v1beta/workspaces")
 }
 
 async function deleteSource(w, s) {
-    return reqBearer("DELETE", `https://platform.segmentapis.com/v1alpha/${w}/${s}`)
+    return reqBearer("DELETE", `https://platform.segmentapis.com/v1beta/${w}/${s}`)
 }
 
 async function createSource(w, s) {
-    return reqBearer("POST", `https://platform.segmentapis.com/v1alpha/${w}/sources`, {
+    return reqBearer("POST", `https://platform.segmentapis.com/v1beta/${w}/sources`, {
         "source": {
             "name": `${w}/${s}`,
             "catalog_name": "catalog/sources/javascript"
@@ -117,7 +117,7 @@ async function createSource(w, s) {
 }
 
 async function createDest(w, s, url) {
-    return reqBearer("POST", `https://platform.segmentapis.com/v1alpha/${w}/${s}/destinations`, {
+    return reqBearer("POST", `https://platform.segmentapis.com/v1beta/${w}/${s}/destinations`, {
         "destination": {
             "name": `${w}/${s}/destinations/webhooks`,
             "config": [
