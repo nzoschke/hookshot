@@ -9,6 +9,7 @@
   "author": "Noah Zoschke",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^6.2.0",
     "ngrok": "^3.1.0",
     "request": "^2.88.0"
   }

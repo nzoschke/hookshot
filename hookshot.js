@@ -1,4 +1,10 @@
 #!/usr/bin/env node
+const dotenv = require("dotenv")
+dotenv.config()
+if (process.env.TOKEN === undefined) {
+    log("error", "no TOKEN in .env file or environment")
+    process.exit(1);
+}
 
 const http = require("http")
 const ngrok = require("ngrok")
@@ -40,7 +46,7 @@ const emitter = new Emitter();
         log("request", r.messageId)
         console.timeEnd("⏱  send/recv")
     } catch (errorRes) {
-        log("ERROR", errorRes.statusCode, errorRes.headers)
+        log("ERROR", errorRes.statusCode, errorRes.body)
         process.exit(1)
     }
 
@@ -86,6 +92,9 @@ async function req(method, url, body, headers, user, pass) {
     return new Promise(function (resolve, reject) {
         request(options, function (error, response, body) {
             if (error) return reject(error);
+
+            if (response.statusCode >= 400) return reject(response)
+
             resolve(body)
         });
 
@@ -131,6 +140,7 @@ async function createDest(w, s, url) {
                     ]
                 }
             ],
+            "connection_mode": "CLOUD",
             "enabled": true
         }
     })
